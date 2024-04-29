@@ -1,19 +1,32 @@
-import {useId} from 'react'
-
+import { useId } from 'react';
 
 function InputBox({
     label,
     amount,
     onChangeAmount,
     onCurrencyChange,
-    selectedCurrency="usd",
-    amountDisable=false,
-    currencyDisable=false,
-    currencyOptions=[],
-    className = ""
+    selectedCurrency = 'usd',
+    amountDisable = false,
+    currencyDisable = false,
+    currencyOptions = [],
+    className = '',
 }) {
-   
-   const amountID=useId();
+    const amountID = useId();
+
+    // Function to handle the change in the input amount
+    const handleAmountChange = (e) => {
+        const value = e.target.value;
+
+        // Convert the input value to a floating-point number and back to a string
+        // This removes any leading zeros
+        const numericValue = parseFloat(value).toString();
+
+        // Call the onChangeAmount callback with the numeric value
+        if (onChangeAmount) {
+            onChangeAmount(numericValue);
+        }
+    };
+
     return (
         <div className={`bg-white p-3 rounded-lg text-sm flex ${className}`}>
             <div className="w-1/2">
@@ -26,10 +39,8 @@ function InputBox({
                     type="number"
                     placeholder="Amount"
                     value={amount}
-                    onChange={(e)=>(onChangeAmount && onChangeAmount(Number(e.target.value)))}
+                    onChange={handleAmountChange}
                     disabled={amountDisable}
-                    
-
                 />
             </div>
             <div className="w-1/2 flex flex-wrap justify-end text-right">
@@ -37,21 +48,18 @@ function InputBox({
                 <select
                     className="rounded-lg px-1 py-1 bg-gray-100 cursor-pointer outline-none"
                     value={selectedCurrency}
-                    onChange={(e)=>(onCurrencyChange && onCurrencyChange(e.target.value))}
+                    onChange={(e) => {
+                        if (onCurrencyChange) {
+                            onCurrencyChange(e.target.value);
+                        }
+                    }}
                     disabled={currencyDisable}
                 >
-                    
-                    {currencyOptions.map(
-                        (currency)=>(
-                            <option key={currency} value={currency}>
-                              {currency}
-                            </option>
-                        )
-                    )}
-
-
-                        
-                
+                    {currencyOptions.map((currency) => (
+                        <option key={currency} value={currency}>
+                            {currency}
+                        </option>
+                    ))}
                 </select>
             </div>
         </div>
